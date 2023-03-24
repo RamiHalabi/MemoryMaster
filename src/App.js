@@ -9,6 +9,7 @@ function App() {
   const [userGuesses, setUserGuesses] = useState([]);
   const [generatedColors, setGeneratedColors] = useState([]);
   const [level, setLevel] = useState(1);
+  const [animation, setAnimation] = useState(false);
   const colorPallette = [
     "red",
     "green",
@@ -79,34 +80,47 @@ function App() {
     }
   };
 
+  // user clicks start
   const RunGame = () => {
-    setUserGuesses([]);
-    const isPlaying = true;
-    const mainSquare = document.getElementById("main-square");
-
-    if (isPlaying) {
-      // select random color from generatedColors
-      let randomColor = RandomColor();
-      // add color to correctSequence
-      setCorrectSequence([...correctSequence, randomColor]);
-
+    // add initial color to begin animation
+    if (correctSequence.length === 0) {
+      setCorrectSequence([...correctSequence, RandomColor()]);
     }
   };
 
+  // user clicks a color, add color to userGuesses
   const userGuess = (color) => {
     const guess = color.target.style.backgroundColor;
-    setUserGuesses([...userGuesses, guess]);
+    if (!animation && userGuesses.length < correctSequence.length) {
+      setUserGuesses([...userGuesses, guess]);
+    }
   };
 
+  const MapGuesses = () => {
+    const colorDivs = userGuesses.map((color) => (
+      <div
+        classname="mini-square"
+        style={{
+          backgroundColor: color,
+          width: "50px",
+          height: "50px",
+          margin: "1px 2px",
+          borderRadius: "4px",
+          border: "2px solid black",
+        }}
+      />
+    ));
+    return colorDivs;
+  };
+
+  // user makes it to next level, reset guesses and add new color
   const NextLevel = () => {
-    const mainSquare = document.getElementById("main-square");
-    mainSquare.style.border = "5px solid black";
-    let randomColor = RandomColor();
     setLevel(level + 1);
-    setCorrectSequence([...correctSequence, randomColor]);
+    setCorrectSequence([...correctSequence, RandomColor()]);
     setUserGuesses([]);
   };
 
+  // game over, reset variables
   const ResetGame = () => {
     setCorrectSequence([]);
     setUserGuesses([]);
@@ -125,6 +139,7 @@ function App() {
     let tempSequence = correctSequence.slice(0, userGuesses.length);
     if (userGuesses.length > 0) {
       if (!(JSON.stringify(tempSequence) === JSON.stringify(userGuesses))) {
+        // user clicks wrong color
         setGameOver(true);
       } else {
         if (JSON.stringify(correctSequence) === JSON.stringify(userGuesses)) {
@@ -134,6 +149,7 @@ function App() {
           mainSquare.style.fontSize = "2em";
           mainSquare.innerHTML = "NEXT LEVEL";
           setTimeout(() => {
+            mainSquare.style.border = "5px solid black";
             NextLevel();
           }, 1000);
         }
@@ -144,16 +160,22 @@ function App() {
   // actions that happen when correctSequence is updated (next level)
   useEffect(() => {
     const mainSquare = document.getElementById("main-square");
+    const squares = document.querySelector(".square-container");
     if (mainSquare) {
       mainSquare.innerHTML = "";
+      squares.style.opacity = "0.25";
       // loop background color over correctSequence
       for (let i = 0; i <= correctSequence.length; i++) {
+        setAnimation(true);
         setTimeout(() => {
           mainSquare.style.backgroundColor = correctSequence[i];
         }, i * 1000); // Change the color every 1 second
       }
+
       // Set the final background color after the sequence is completed
       setTimeout(() => {
+        squares.style.opacity = "1";
+        setAnimation(false);
         mainSquare.style.backgroundColor = "#282b28";
         mainSquare.style.fontSize = "1.5em";
         mainSquare.innerHTML = "Input Sequence";
@@ -187,6 +209,7 @@ function App() {
             <div className="square" id="main-square" onClick={RunGame}>
               START
             </div>
+            <div className="guess-container">{MapGuesses()}</div>
             <div className="square-container">
               <div
                 className="square-1"
