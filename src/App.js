@@ -10,10 +10,14 @@ function App() {
   const [generatedColors, setGeneratedColors] = useState([]);
   const [level, setLevel] = useState(1);
   const [animation, setAnimation] = useState(false);
+	
+	
   const [score, setScore] = useState(0);
   const [highestScore, setHighestScore] = useState(
     parseInt(localStorage.getItem('highestScore')) || 0
   );
+	
+	
   const colorPallette = [
     "red",
     "green",
@@ -155,10 +159,17 @@ function App() {
           mainSquare.innerHTML = "NEXT LEVEL";
           setTimeout(() => {
             mainSquare.style.border = "5px solid black";
+		  
+		  
+		  
 	     setLevel(level + 1);
           setCorrectSequence([...correctSequence, RandomColor()]);
           setUserGuesses([]);
           setScore(level + 1);
+		  
+		  
+		  
+		  
             //NextLevel();
           }, 1000);
         }
@@ -192,12 +203,22 @@ function App() {
     }
   }, [correctSequence]);
 
+
+
+
+
+
   useEffect(() => {
   if (score > highestScore) {
     setHighestScore(score);
     localStorage.setItem('highestScore', score);
   }
 }, [score]);
+
+
+
+
+
 
 
   return (
@@ -273,8 +294,14 @@ function App() {
           </>
         )}
       </div>
+
+
+
 	 <div className="scoreboard">
         Score: {score} | Highest Score: {highestScore}
+
+
+
     </div>
   </div>
   );
