@@ -197,9 +197,6 @@ function App() {
               <button className="PlayButton" onClick={StartGame}>
                 Play Game
               </button>
-              <button className="StatsButton" onClick={ShowStats}>
-                Player Stats.
-              </button>
             </div>
           </>
         ) : !gameOver ? (
